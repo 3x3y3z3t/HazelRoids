@@ -10,6 +10,9 @@ With this project, I want to test and show off the ability to link an executable
 - Press Up arrow key to accelerate and Down arrow key to decelerate faster.
 - Hold Ctrl + R for a while to restart the game (there will be indicator appear).
 - Hold Alt key to show (Imgui) debug/info gui.
+
+ ## Todo list
+- Add particles.
  
  ## Build
 Windows only, with MS Visual Studio 2017/2019.

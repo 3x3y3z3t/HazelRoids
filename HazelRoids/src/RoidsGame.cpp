@@ -191,10 +191,6 @@ namespace hzg
         if (Hazel::Input::IsKeyPressed(Hazel::Key::LeftControl) && Hazel::Input::IsKeyPressed(Hazel::Key::R))
         {
             holdTime += _ts;
-            if (holdTime >= maxHoldTime)
-            {
-                // TODO: Restart game;
-            }
         }
         else
         {
@@ -482,15 +478,43 @@ namespace hzg
     {
         if (!m_ShowDebugGui)
             return;
-
+    
+        auto vpPos = ImGui::GetMainViewport()->Pos;
+        ImGuiIO io = ImGui::GetIO();
+        ImGuiWindowFlags flag = ImGuiWindowFlags_NoMove
+            | ImGuiWindowFlags_NoResize
+            | ImGuiWindowFlags_NoCollapse
+            ;
         if (m_Player->IsDead())
         {
+            ImGui::SetNextWindowPos(ImVec2(vpPos.x + 366, vpPos.y + 297), ImGuiCond_Once);
+            ImGui::SetNextWindowSize(ImVec2(550, 126), ImGuiCond_Once);
             // show Dead guide window;
+            ImGui::Begin("You Lose window", nullptr, flag);
+            auto font = ImGui::GetFont();
+            font->FontSize = 3.0f;
+            ImGui::SetCursorPosX(275 - ImGui::CalcTextSize("You Lose!").x * 0.5f);
+            ImGui::Text("You Lose!");
+            font->FontSize = 13.0f;
+            ImGui::NewLine();
+            ImGui::NewLine();
+            ImGui::NewLine();
+            ImGui::SetCursorPosX(275 - ImGui::CalcTextSize("Hold Ctrl + R for 1 second to restart.").x * 0.5f);
+            ImGui::Text("Hold Ctrl + R for 1 second to restart.");
+            ImGui::End();
         }
 
+        ImGui::SetNextWindowPos(ImVec2(vpPos.x + 41, vpPos.y + 17), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(506, 80), ImGuiCond_Once);
         // always show score window;
+        ImGui::Begin("Score window", nullptr, flag);
+        auto font = ImGui::GetFont();
+        font->FontSize = 3.2f;
+        ImGui::Text("Score: %09d", m_Score);
+        font->FontSize = 13.0f;
+        ImGui::End();
 
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
     }
 
     void RoidsGame::OnEvent(Hazel::Event& _event)
