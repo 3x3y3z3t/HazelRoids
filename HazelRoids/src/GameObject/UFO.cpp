@@ -103,13 +103,14 @@ namespace hzg
         m_Vertices.push_back({ pos.x + +0.05f, pos.y + -0.04f });
         m_Vertices.push_back({ pos.x + +0.06f, pos.y + -0.02f });
 
-        float radius = 0.05f;
-        for (float deg = 0.0f; deg <= 159.0f; deg += 5.0f)
-        {
-            float pX = glm::cos(glm::radians(deg + 13.0f)) * radius;
-            float pY = glm::sin(glm::radians(deg + 13.0f)) * radius;
-            m_Vertices.push_back({ pos.x + pX, pos.y + pY });
-        }
+        //float radius = 0.05f;
+        //for (float deg = 0.0f; deg <= 159.0f; deg += 5.0f)
+        //{
+        //    float pX = glm::cos(glm::radians(deg + 13.0f)) * radius;
+        //    float pY = glm::sin(glm::radians(deg + 13.0f)) * radius;
+        //    m_Vertices.push_back({ pos.x + pX, pos.y + pY });
+        //}
+        ext::DrawArc(pos, 0.05f, 32.0f, 170.0f);
 
         ext::DrawLine(m_Vertices[0], m_Vertices[1]);
         ext::DrawLine(m_Vertices[1], m_Vertices[2]);
@@ -120,9 +121,9 @@ namespace hzg
         ext::DrawLine(m_Vertices[5], m_Vertices[6]);
         ext::DrawLine(m_Vertices[6], m_Vertices[7]);
 
-        for (int i = 0; i + 7 < m_Vertices.size() - 2; ++i)
-        {
-            ext::DrawLine(m_Vertices[i + 8], m_Vertices[i + 9]);
-        }
+        //for (int i = 0; i + 7 < m_Vertices.size() - 2; ++i)
+        //{
+        //    ext::DrawLine(m_Vertices[i + 8], m_Vertices[i + 9]);
+        //}
     }
 }

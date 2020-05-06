@@ -20,9 +20,14 @@ namespace hzg
         m_HitboxRadius = 0.04f * m_Size;
 
         float b = 0.4f;
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < 16; ++i)
         {
             m_VertexOffsets.push_back(ext::RNG32::NextFloat(-b, b));
+            //b = ext::RNG32::NextFloat(0.0f, 0.4f);
+            //if (i % 2 == 0)
+            //    m_VertexOffsets.push_back(b);
+            //else
+            //    m_VertexOffsets.push_back(-b);
         }
     }
 

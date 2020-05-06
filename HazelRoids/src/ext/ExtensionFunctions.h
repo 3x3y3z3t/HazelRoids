@@ -2,6 +2,9 @@
 #include <Hazel.h>
 #include <random>
 
+/** This contains all extension functions/classes/etc.. 
+ *  which is currently not yet implemented in Hazel. 
+ */
 namespace ext
 {
     class RNG32
