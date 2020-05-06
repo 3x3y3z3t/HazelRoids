@@ -20,7 +20,7 @@ namespace hzg
         Bullet* b = new Bullet();
         b->SetPosition(m_GunPosition);
         b->SetRotation(m_Rotation);
-        b->SetMaxSpeed(1.0f + m_Speed);
+        b->SetMaxSpeed(0.75f + m_Speed);
         b->SetMaxLifetime(1.0f);
 
         RoidsGame::Get()->AddGameObject(b);
@@ -29,6 +29,42 @@ namespace hzg
 
     void UFO::Update(Hazel::Timestep _ts)
     {
+        m_GunPosition = { m_Position.x, m_Position.y - 0.04f };
+
+        auto player = RoidsGame::Get()->GetPlayer();
+        auto playerPos = player->GetPosition();
+        auto playerRot = player->GetRotation();
+
+        if (playerPos.x > 1.7777777f)
+            playerPos.x -= 1.7777777f * 2.0f;
+        else if (playerPos.x < -1.7777777f)
+            playerPos.x += 1.7777777f * 2.0f;
+        if (playerPos.y > 1.0f)
+            playerPos.y -= 2.0f;
+        else if (playerPos.y < -1.0f)
+            playerPos.y += 2.0f;
+
+        float rad = glm::atan((playerPos.y - m_Position.y), (playerPos.x - m_Position.x));
+        m_Rotation = glm::degrees(rad);
+
+        float distance = glm::distance(m_Position, playerPos);
+        if (distance > 1.0f || m_Rotation < -150.0f || m_Rotation > -30.0f)
+        {
+            // try getting close and above;
+            m_Accelerating = 1;
+        }
+        else
+        {
+            m_Accelerating = 0;
+            if (m_Rotation >= -150.0f && m_Rotation < -30.0f)
+            {
+                if (IsReadyToShoot())
+                {
+                    Shoot();
+                }
+            }
+        }
+
         GameObject::Update(_ts);
     }
 

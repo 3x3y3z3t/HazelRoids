@@ -56,6 +56,7 @@ namespace hzg
         inline GameObjectType GetType() const { return m_Type; }
         inline int GetScore() const { return m_Score; }
         inline const glm::vec2& GetPosition() const { return m_Position; }
+        inline float GetRotation() const { return m_Rotation; }
 
         inline void SetPosition(const glm::vec2& _position) { m_Position = _position; }
         inline void SetRotation(float _rotation) { m_Rotation = _rotation; }

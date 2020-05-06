@@ -303,7 +303,7 @@ namespace hzg
                     m_Bullets[i]->Collide(m_Objects[j]);
                     if (m_Objects[j]->IsDead())
                     {
-                        m_Score += m_Objects[i]->GetScore();
+                        m_Score += m_Objects[j]->GetScore();
                         m_Objects.erase(m_Objects.begin() + j);
                         --j;
                     }

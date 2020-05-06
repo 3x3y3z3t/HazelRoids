@@ -129,6 +129,10 @@ namespace hzg
         Hazel::Renderer2D::DrawRotatedQuad(pos, { 0.005f, 0.005f }, m_Rotation, { 1.0f, 0.0f, 0.0f, 1.0f });
 
         #ifdef HZ_DEBUG
+        // draw rotation;
+        float rad = glm::radians(m_Rotation);
+        Hazel::Renderer2D::DrawRotatedQuad({ pos.x + glm::cos(rad) * m_HitboxRadius * 0.5f, pos.y + glm::sin(rad) * m_HitboxRadius * 0.5f },
+                                           { m_HitboxRadius, 0.005f }, m_Rotation, { 1.0f, 0.0f, 1.0f, 1.0f });
         // draw hitbox;
         #if 1
         float b = 1.0f;
