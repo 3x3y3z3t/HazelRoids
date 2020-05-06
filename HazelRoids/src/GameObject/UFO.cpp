@@ -1,14 +1,30 @@
 #include "UFO.h"
 #include "ext\ExtensionFunctions.h"
 
+#include "RoidsGame.h"
+#include "Bullet.h"
+
 namespace hzg
 {
     UFO::UFO()
     {
         m_Type = GameObjectType::UFO;
+        m_Score = 5000;
         m_HitboxRadius = 0.06f;
 
         m_RotationRate = 0.0f;
+    }
+
+    void UFO::Shoot()
+    {
+        Bullet* b = new Bullet();
+        b->SetPosition(m_GunPosition);
+        b->SetRotation(m_Rotation);
+        b->SetMaxSpeed(1.0f + m_Speed);
+        b->SetMaxLifetime(1.0f);
+
+        RoidsGame::Get()->AddGameObject(b);
+        Reload();
     }
 
     void UFO::Update(Hazel::Timestep _ts)

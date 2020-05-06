@@ -11,17 +11,14 @@ namespace hzg
 
     void GameObject::Shoot()
     {
-
         Bullet* b = new Bullet();
         b->SetPosition(m_GunPosition);
         b->SetRotation(m_Rotation);
         b->SetMaxSpeed(1.0f + m_Speed);
         b->SetMaxLifetime(1.0f);
 
-        RoidsGame::Get()->AddGameObject(b);
+        RoidsGame::Get()->AddBullet(b);
         Reload();
-
-
     }
 
     bool GameObject::Collide(GameObject* _other)

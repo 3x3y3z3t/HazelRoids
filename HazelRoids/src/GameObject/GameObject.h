@@ -15,6 +15,7 @@ namespace hzg
     {
     protected:
         GameObjectType m_Type = GameObjectType::None;
+        int m_Score = 0;
         glm::vec2 m_Position = { 0.0f, 0.0f };
         float m_Rotation = 0.0f;
 
@@ -53,6 +54,7 @@ namespace hzg
         inline bool IsDead() const { return m_Dead; }
         inline bool IsReadyToShoot() const { return m_RemainingReloadTime <= 0.0f; }
         inline GameObjectType GetType() const { return m_Type; }
+        inline int GetScore() const { return m_Score; }
         inline const glm::vec2& GetPosition() const { return m_Position; }
 
         inline void SetPosition(const glm::vec2& _position) { m_Position = _position; }

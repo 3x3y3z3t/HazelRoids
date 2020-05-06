@@ -12,8 +12,22 @@ namespace hzg
     float roidSpawnInterval = 0.0f;
     float ufoSpawnInterval = 0.0f;
     constexpr float maxHoldTime = 1.0f;
-    constexpr float maxRoidSpawnInterval = 1.0f;
+    constexpr float maxRoidSpawnInterval = 10.0f;
     constexpr float maxUfoSpawnInterval = 5.0f;
+    constexpr char* youLoseTexts[5] = {
+            "#   #  ###  #   #   #      ###   ####  ####",
+            " # #  #   # #   #   #     #   # #     #    ",
+            "  #   #   # #   #   #     #   #  ###  #####",
+            "  #   #   # #   #   #     #   #     # #    ",
+            "  #    ###   ###    #####  ###  ####   ####",
+    };
+    constexpr char* scoreText[5] = {
+            " ####  ###  ###  ####   ####    ",
+            "#     #    #   # #   # #     #  ",
+            " ###  #    #   # ####  #####    ",
+            "    # #    #   # #  #  #        ",
+            "####   ###  ###  #   #  #### #  ",
+    };
 
     void SpawnRandomUFO()
     {
@@ -75,10 +89,14 @@ namespace hzg
 
         if (m_Player != nullptr) delete m_Player;
         
+        m_Score = 0;
+        m_LastScore = -1;
+
+
         m_Player = new Player();
         m_Player->SetMaxSpeed(1.0f);
         m_Player->SetAccelerationRate(0.5f);
-        m_Player->SetRotationRate(90.0f);
+        m_Player->SetRotationRate(180.0f);
         m_Player->SetReloadTime(0.2f);
 
         holdTime = 0.0f;
@@ -103,6 +121,50 @@ namespace hzg
         roid->SetRotation(ext::RNG32::NextFloat(0.0f, 360.0f));
         roid->SetMaxSpeed(0.5f);
         RoidsGame::Get()->AddGameObject(roid);
+    }
+
+    void RoidsGame::RenderScoreText() const
+    {
+        using namespace Hazel;
+        constexpr float pixelWidth = 0.015f;
+        glm::vec2 topLeft = { -1.6f, 0.85f };
+        glm::vec4 color = { 1.0f, 1.0f, 0.1f, 1.0f };
+
+        for (int i = 0; i < 5; ++i)
+        {
+            auto& str = m_ScoreTexts[i];
+
+            for (int j = 0; j < str.length(); ++j)
+            {
+                if (str[j] == '#')
+                {
+                    Renderer2D::DrawQuad({ topLeft.x + pixelWidth * j, topLeft.y - pixelWidth * i }, { pixelWidth, pixelWidth }, color);
+                }
+            }
+        }
+    }
+
+    void RoidsGame::RenderYouLoseText() const
+    {
+        using namespace Hazel;
+        constexpr float pixelWidth = 0.03f;
+        glm::vec2 center = { 0.0f, 0.0f };
+        glm::vec2 topLeft = { -22.0f * pixelWidth, 2.5f * pixelWidth };
+        glm::vec4 color = { 1.0f, 1.0f, 0.1f, 1.0f };
+
+        for (int i = 0; i < 5; ++i)
+        {
+            const char* str = youLoseTexts[i];
+
+            for (int j = 0; j < 44; ++j)
+            {
+                if (str[j] == '#')
+                {
+                    Renderer2D::DrawQuad({ topLeft.x + pixelWidth * j, topLeft.y - pixelWidth * i }, { pixelWidth, pixelWidth }, color);
+                }
+            }
+        }
+        Renderer2D::DrawQuad(center, { 44.0f * pixelWidth + 0.2f, 5.0f * pixelWidth + 0.2f }, { 0.3f, 0.3f, 0.3f, 0.5f });
     }
 
     void RoidsGame::OnAttach()
@@ -225,6 +287,7 @@ namespace hzg
                     m_Player->Collide(m_Objects[i]);
                     if (m_Objects[i]->IsDead())
                     {
+                        m_Score += m_Objects[i]->GetScore();
                         m_Objects.erase(m_Objects.begin() + i);
                         --i;
                     }
@@ -240,9 +303,9 @@ namespace hzg
                     m_Bullets[i]->Collide(m_Objects[j]);
                     if (m_Objects[j]->IsDead())
                     {
+                        m_Score += m_Objects[i]->GetScore();
                         m_Objects.erase(m_Objects.begin() + j);
                         --j;
-                        //EXW_LOG_DEBUG("Object is ded!");
                     }
                     if (m_Bullets[i]->IsDead())
                     {
@@ -262,6 +325,108 @@ namespace hzg
             ufoSpawnInterval += _ts;
         }
 
+        if (m_Score > 999'999'999) m_Score = 999'999'999;
+        #pragma region Update Score Text
+        if (m_LastScore != m_Score)
+        {
+            m_ScoreTexts[0] = scoreText[0];
+            m_ScoreTexts[1] = scoreText[1];
+            m_ScoreTexts[2] = scoreText[2];
+            m_ScoreTexts[3] = scoreText[3];
+            m_ScoreTexts[4] = scoreText[4];
+
+            char buffer[16];
+            sprintf_s(buffer, "%09d", m_Score);
+            for (int i = 0; i < 9; ++i)
+            {
+                switch (buffer[i])
+                {
+                    case '0':
+                        m_ScoreTexts[0].append("  ### ");
+                        m_ScoreTexts[1].append(" #  ##");
+                        m_ScoreTexts[2].append(" # # #");
+                        m_ScoreTexts[3].append(" ##  #");
+                        m_ScoreTexts[4].append("  ### ");
+                        break;
+                    case '1':
+                        m_ScoreTexts[0].append("  ##  ");
+                        m_ScoreTexts[1].append(" # #  ");
+                        m_ScoreTexts[2].append("   #  ");
+                        m_ScoreTexts[3].append("   #  ");
+                        m_ScoreTexts[4].append(" #####");
+                        break;
+                    case '2':
+                        m_ScoreTexts[0].append(" #### ");
+                        m_ScoreTexts[1].append("     #");
+                        m_ScoreTexts[2].append("  ### ");
+                        m_ScoreTexts[3].append(" #    ");
+                        m_ScoreTexts[4].append(" #####");
+                        break;
+                    case '3':
+                        m_ScoreTexts[0].append(" #### ");
+                        m_ScoreTexts[1].append("     #");
+                        m_ScoreTexts[2].append("  ### ");
+                        m_ScoreTexts[3].append("     #");
+                        m_ScoreTexts[4].append(" #### ");
+                        break;
+                    case '4':
+                        m_ScoreTexts[0].append(" #  # ");
+                        m_ScoreTexts[1].append(" #  # ");
+                        m_ScoreTexts[2].append(" #####");
+                        m_ScoreTexts[3].append("    # ");
+                        m_ScoreTexts[4].append("    # ");
+                        break;
+                    case '5':
+                        m_ScoreTexts[0].append(" #####");
+                        m_ScoreTexts[1].append(" #    ");
+                        m_ScoreTexts[2].append(" #### ");
+                        m_ScoreTexts[3].append("     #");
+                        m_ScoreTexts[4].append(" #### ");
+                        break;
+                    case '6':
+                        m_ScoreTexts[0].append("  ### ");
+                        m_ScoreTexts[1].append(" #    ");
+                        m_ScoreTexts[2].append("  ### ");
+                        m_ScoreTexts[3].append(" #   #");
+                        m_ScoreTexts[4].append("  ### ");
+                        break;
+                    case '7':
+                        m_ScoreTexts[0].append(" #####");
+                        m_ScoreTexts[1].append(" #   #");
+                        m_ScoreTexts[2].append("    # ");
+                        m_ScoreTexts[3].append("   #  ");
+                        m_ScoreTexts[4].append("  #   ");
+                        break;
+                    case '8':
+                        m_ScoreTexts[0].append("  ### ");
+                        m_ScoreTexts[1].append(" #   #");
+                        m_ScoreTexts[2].append("  ### ");
+                        m_ScoreTexts[3].append(" #   #");
+                        m_ScoreTexts[4].append("  ### ");
+                        break;
+                    case '9':
+                        m_ScoreTexts[0].append("  ### ");
+                        m_ScoreTexts[1].append(" #   #");
+                        m_ScoreTexts[2].append("  ### ");
+                        m_ScoreTexts[3].append("     #");
+                        m_ScoreTexts[4].append("  ### ");
+                        break;
+                }
+}
+
+
+
+
+
+            m_LastScore = m_Score;
+        }
+        #pragma endregion
+
+
+
+
+
+
 
         // ===== Draw =====
         // ================
@@ -280,10 +445,13 @@ namespace hzg
                 ext::DrawArc({ 0.0f, 0.0f }, 0.1f, 90.0f, 90.0f - deg, { 0.0f, 1.0f, 1.0f, 1.0f }, 2.0f);
             }
 
-                Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.7777777f * 2.0fX, 2.0f }, { 0.8f, 0.8f, 0.8f, 0.1f });
             if (m_Player->IsDead())
             {
+                RenderYouLoseText();
+                //Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.7777777f * 2.0f, 2.0f }, { 0.8f, 0.8f, 0.8f, 0.1f });
             }
+
+            RenderScoreText();
 
 
             // draw player;
@@ -304,10 +472,6 @@ namespace hzg
                 m_Objects[i]->Render(true);
             }
 
-
-
-
-
             Renderer2D::EndScene();
         }
         // ===== Complete Drawing =====
@@ -318,6 +482,13 @@ namespace hzg
     {
         if (!m_ShowDebugGui)
             return;
+
+        if (m_Player->IsDead())
+        {
+            // show Dead guide window;
+        }
+
+        // always show score window;
 
         ImGui::ShowDemoWindow();
     }

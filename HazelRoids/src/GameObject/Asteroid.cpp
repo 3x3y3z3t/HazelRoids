@@ -16,6 +16,7 @@ namespace hzg
             _size = ext::RNG32::NextInt(1, 5);
         }
         m_Size = _size;
+        m_Score = 1000 * (6 - m_Size);
         m_HitboxRadius = 0.04f * m_Size;
 
         float b = 0.4f;
