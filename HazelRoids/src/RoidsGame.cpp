@@ -1,5 +1,7 @@
-#include "RoidsGame.h"
+﻿#include "RoidsGame.h"
 #include "ext\ExtensionFunctions.h"
+#include "ext\ParticleSystem.h"
+#include "ext\Particle.h"
 
 #include "GameObject\UFO.h"
 #include "GameObject\Asteroid.h"
@@ -15,19 +17,75 @@ namespace hzg
     constexpr float maxRoidSpawnInterval = 10.0f;
     constexpr float maxUfoSpawnInterval = 5.0f;
     constexpr char* youLoseTexts[5] = {
-            "#   #  ###  #   #   #      ###   ####  ####",
-            " # #  #   # #   #   #     #   # #     #    ",
-            "  #   #   # #   #   #     #   #  ###  #####",
-            "  #   #   # #   #   #     #   #     # #    ",
-            "  #    ###   ###    #####  ###  ####   ####",
+        "#   #  ###  #   #   #      ###   ####  ####",
+        " # #  #   # #   #   #     #   # #     #    ",
+        "  #   #   # #   #   #     #   #  ###  #####",
+        "  #   #   # #   #   #     #   #     # #    ",
+        "  #    ###   ###    #####  ###  ####   ####",
     };
     constexpr char* scoreText[5] = {
-            " ####  ###  ###  ####   ####    ",
-            "#     #    #   # #   # #     #  ",
-            " ###  #    #   # ####  #####    ",
-            "    # #    #   # #  #  #        ",
-            "####   ###  ###  #   #  #### #  ",
+        " ####  ###  ###  ####   ####    ",
+        "#     #    #   # #   # #     #  ",
+        " ###  #    #   # ####  #####    ",
+        "    # #    #   # #  #  #        ",
+        "####   ###  ###  #   #  #### #  ",
     };
+	constexpr char* heartSymbol[9] = {
+		"  ##   ##  ",
+		" #### #### ",
+		"###########",
+		"###########",
+		" ######### ",
+		"  #######  ",
+		"   #####   ",
+		"    ###    ",
+		"     #     ",
+	};
+
+	void EmitCollisionParticles(const glm::vec2& _pos)
+	{
+		for (int count = 0; count < 10; ++count)
+		{
+			ext::Particle* p = new ext::Particle(ext::ParticleShape::Square);
+			p->SetPosition(_pos);
+			p->SetSize(0.0075f);
+			p->SetMaxSpeed(ext::RNG32::NextFloat(1.0f, 1.4f));
+			p->SetMaxLifetime(0.20f);
+			p->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+			p->SetRotation(ext::RNG32::NextFloat(-179.0f, 180.0f));
+			ext::ParticleSystem::AddParticle(p);
+		}
+	}
+
+	void EmitSpawningParticles(const glm::vec2& _pos, float _size)
+	{
+		constexpr float sizes[] = { 3.25f, 3.0f, 2.75f, 2.5f, 1.5f };
+		constexpr glm::vec4 colors[] {
+			{ 0.3f, 0.3f, 0.3f, 1.0f },
+			{ 0.25f, 0.25f, 0.25f, 1.0f },
+			{ 0.2f, 0.2f, 0.2f, 1.0f },
+			{ 0.1f, 0.1f, 0.1f, 1.0f },
+			{ 0.05f, 0.05f, 0.05f, 1.0f },
+		};
+
+		for (int i = 0; i < 5; ++i)
+		{
+			ext::Particle* wormholeParticle = new ext::Particle(ext::ParticleShape::Circle);
+			wormholeParticle->SetPosition(_pos);
+			wormholeParticle->SetMaxLifetime(1.0f);
+			wormholeParticle->SetColor(colors[i]);
+			wormholeParticle->SetSize(_size * sizes[i]);
+			ext::ParticleSystem::AddParticle(wormholeParticle);
+		}
+
+		ext::ParticleEmitter* emitter = new ext::ParticleEmitter();
+		emitter->SetParticleShape(ext::ParticleShape::Line);
+		emitter->SetPosition(_pos);
+		emitter->SetEmitterLifetime(1.0f);
+		emitter->SetEmitDirection(PARTICLE_EMITTER_EMIT_RANDOM_DIRECTION);
+
+		ext::ParticleSystem::AddEmitter(emitter);
+	}
 
     void SpawnRandomUFO()
     {
@@ -40,6 +98,10 @@ namespace hzg
             else x -= 1.0f;
         }
         RoidsGame::Get()->SpawnUFO({ x, y });
+
+		glm::vec2 pos = { x, y };
+		float size = 0.06f;
+		EmitSpawningParticles(pos, size);
     }
 
     void SpawnRandomAsteroid()
@@ -53,7 +115,12 @@ namespace hzg
             if (x >= 0.0f) x += 1.0f;
             else x -= 1.0f;
         }
-        RoidsGame::Get()->SpawnRoid({ x, y });
+		unsigned int size = ext::RNG32::NextInt(1, 5);
+        RoidsGame::Get()->SpawnRoid({ x, y }, size);
+
+		glm::vec2 pos = { x, y };
+
+		EmitSpawningParticles(pos, size * 0.03f);
     }
 
     RoidsGame* RoidsGame::s_Instance = nullptr;
@@ -98,10 +165,46 @@ namespace hzg
         m_Player->SetAccelerationRate(0.5f);
         m_Player->SetRotationRate(180.0f);
         m_Player->SetReloadTime(0.2f);
+		m_PlayerLife = 5U;
 
         holdTime = 0.0f;
         roidSpawnInterval = 0.0f;
         ufoSpawnInterval = 0.0f;
+
+
+
+		auto pos = glm::vec2(0.5f, 0.5f);
+		float size = 0.075f;
+
+
+
+		constexpr float sizes[] = { 3.25f, 3.0f, 2.75f, 2.5f, 1.5f };
+		constexpr glm::vec4 colors[] {
+			{ 0.3f, 0.3f, 0.3f, 1.0f },
+			{ 0.25f, 0.25f, 0.25f, 1.0f },
+			{ 0.2f, 0.2f, 0.2f, 1.0f },
+			{ 0.1f, 0.1f, 0.1f, 1.0f },
+			{ 0.05f, 0.05f, 0.05f, 1.0f },
+		};
+
+		for (int i = 0; i < 5; ++i)
+		{
+			ext::Particle* wormholeParticle = new ext::Particle(ext::ParticleShape::Circle);
+			wormholeParticle->SetPosition(pos);
+			wormholeParticle->SetMaxLifetime(1.0f);
+			wormholeParticle->SetColor(colors[i]);
+			wormholeParticle->SetSize(size * sizes[i]);
+			//ext::ParticleSystem::AddParticle(wormholeParticle);
+		}
+		
+		ext::ParticleEmitter* emitter = new ext::ParticleEmitter();
+		emitter->SetParticleShape(ext::ParticleShape::Line);
+		emitter->SetPosition(pos);
+		emitter->SetEmitterLifetime(1.0f);
+		emitter->SetEmitDirection(PARTICLE_EMITTER_EMIT_RANDOM_DIRECTION);
+
+		//ext::ParticleSystem::AddEmitter(emitter);
+
     }
 
     void RoidsGame::SpawnUFO(const glm::vec2& _position)
@@ -112,6 +215,7 @@ namespace hzg
         ufo->SetAccelerationRate(0.5f);
         ufo->SetReloadTime(1.0f);
         RoidsGame::Get()->AddGameObject(ufo);
+
     }
 
     void RoidsGame::SpawnRoid(const glm::vec2& _position, unsigned int _size)
@@ -121,9 +225,36 @@ namespace hzg
         roid->SetRotation(ext::RNG32::NextFloat(0.0f, 360.0f));
         roid->SetMaxSpeed(0.5f);
         RoidsGame::Get()->AddGameObject(roid);
+
+
     }
 
-    void RoidsGame::RenderScoreText() const
+	void hzg::RoidsGame::RenderLifeCount() const
+	{
+		using namespace Hazel;
+		constexpr float pixelWidth = 0.010f;
+		glm::vec2 topLeft = { -1.6f, 0.725f };
+		glm::vec4 color = { 1.0f, 1.0f, 0.1f, 1.0f };
+
+		for (int life = 0; life < m_PlayerLife; ++life)
+		{
+			for (int i = 0; i < 9; ++i)
+			{
+				const char* str = heartSymbol[i];
+
+				for (int j = 0; j < 12; ++j)
+				{
+					if (str[j] == '#')
+					{
+						Renderer2D::DrawQuad({ topLeft.x + pixelWidth * j, topLeft.y - pixelWidth * i }, { pixelWidth, pixelWidth }, color);
+					}
+				}
+			}
+			topLeft.x += pixelWidth * (12.0f + 3.0f);
+		}
+	}
+
+	void RoidsGame::RenderScoreText() const
     {
         using namespace Hazel;
         constexpr float pixelWidth = 0.015f;
@@ -280,23 +411,42 @@ namespace hzg
             {
                 if (!m_Player->IsDead())
                 {
-                    m_Player->Collide(m_Objects[i]);
-                    if (m_Objects[i]->IsDead())
-                    {
-                        m_Score += m_Objects[i]->GetScore();
-                        m_Objects.erase(m_Objects.begin() + i);
-                        --i;
-                    }
+					if (m_Player->Collide(m_Objects[i]))
+					{
+						EmitCollisionParticles(m_Player->GetPosition());
+						if (m_Objects[i]->GetType() != GameObjectType::Bullet)
+						{
+							EmitCollisionParticles(m_Objects[i]->GetPosition());
+						}
+						if (m_Player->IsDead() && m_PlayerLife > 0U)
+						{
+							m_Player->Revive();
+							--m_PlayerLife;
+						}
+						if (m_Objects[i]->IsDead())
+						{
+							m_Score += m_Objects[i]->GetScore();
+							m_Objects.erase(m_Objects.begin() + i);
+							--i;
+						}
+					}
                 }
-                else break;
+				else
+				{
+					break;
+				}
             }
 
 
             for (int i = 0; i < m_Bullets.size(); ++i)
             {
-                for (int j = 0; j < m_Objects.size(); ++j)
-                {
-                    m_Bullets[i]->Collide(m_Objects[j]);
+				for (int j = 0; j < m_Objects.size(); ++j)
+				{
+					if (m_Bullets[i]->Collide(m_Objects[j]))
+					{
+						EmitCollisionParticles(m_Objects[j]->GetPosition());
+					}
+
                     if (m_Objects[j]->IsDead())
                     {
                         m_Score += m_Objects[j]->GetScore();
@@ -421,6 +571,7 @@ namespace hzg
 
 
 
+		ext::ParticleSystem::UpdateParticles(_ts);
 
 
 
@@ -448,11 +599,14 @@ namespace hzg
             }
 
             RenderScoreText();
-
+			RenderLifeCount();
 
             // draw player;
-            m_Player->Render();
-            m_Player->Render(true);
+			if (!m_Player->IsDead())
+			{
+				m_Player->Render();
+				m_Player->Render(true);
+			}
 
             // draw bullets;
             for (size_t i = 0; i < m_Bullets.size(); ++i)
@@ -468,16 +622,49 @@ namespace hzg
                 m_Objects[i]->Render(true);
             }
 
-            Renderer2D::EndScene();
+            //Renderer2D::EndScene();
         }
         // ===== Complete Drawing =====
         // ============================
+
+
+		// ===== Draw Particles =====
+		// ==========================
+		{
+			using namespace Hazel;
+			//RenderCommand::Clear();
+			//Renderer2D::BeginScene(m_CameraController.GetCamera());
+			//Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 0.01f, 0.01f }, { 0.0f, 1.0f, 1.0f, 1.0f });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			ext::ParticleSystem::RenderParticles();
+
+			Renderer2D::EndScene();
+		}
+		// ===== Complete Drawing Particles =====
+		// ======================================
+
+
     }
 
     void RoidsGame::OnImGuiRender()
     {
-        if (!m_ShowDebugGui)
-            return;
+		if (!m_ShowDebugGui)
+			return;
     
         auto vpPos = ImGui::GetMainViewport()->Pos;
         ImGuiIO io = ImGui::GetIO();
@@ -505,12 +692,15 @@ namespace hzg
         }
 
         ImGui::SetNextWindowPos(ImVec2(vpPos.x + 41, vpPos.y + 17), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(506, 80), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(506, 120), ImGuiCond_Once);
         // always show score window;
         ImGui::Begin("Score window", nullptr, flag);
         auto font = ImGui::GetFont();
         font->FontSize = 3.2f;
         ImGui::Text("Score: %09d", m_Score);
+		ImGui::SetCursorPosY(80.0f);
+		font->FontSize = 5.0f;
+		ImGui::Text("Life: %02d", m_PlayerLife);
         font->FontSize = 13.0f;
         ImGui::End();
 

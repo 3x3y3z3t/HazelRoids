@@ -20,6 +20,7 @@ namespace hzg
         int m_LastScore = -1;
 
         Player* m_Player = nullptr;
+		uint32_t m_PlayerLife = 5U;
 
         std::vector<GameObject*> m_Objects;
         std::vector<Bullet*> m_Bullets;
@@ -54,8 +55,9 @@ namespace hzg
         inline void AddBullet(Bullet* _bullet) { m_Bullets.push_back(_bullet); }
 
         void SpawnUFO(const glm::vec2& _position);
-        void SpawnRoid(const glm::vec2& _position, unsigned int _size = 0U);
+        void SpawnRoid(const glm::vec2& _position, unsigned int _size = 1U);
 
+        void RenderLifeCount() const;
         void RenderScoreText() const;
         void RenderYouLoseText() const;
 

@@ -12,8 +12,7 @@ namespace hzg
 
         if (_size == 0U)
         {
-            // TODO: generate random size;
-            _size = ext::RNG32::NextInt(1, 5);
+			_size = 1U;
         }
         m_Size = _size;
         m_Score = 1000 * (6 - m_Size);

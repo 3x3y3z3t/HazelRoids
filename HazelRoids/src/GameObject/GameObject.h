@@ -32,6 +32,7 @@ namespace hzg
         float m_MaxLifetime = 0.0f;
 
         float m_HitboxRadius = 0.0f;
+		glm::vec2 m_CollisionPosition = { 0.0f, 0.0f };
 
         int m_Accelerating = 0;
         int m_Rotating = 0;
@@ -57,6 +58,8 @@ namespace hzg
         inline int GetScore() const { return m_Score; }
         inline const glm::vec2& GetPosition() const { return m_Position; }
         inline float GetRotation() const { return m_Rotation; }
+		inline float GetHitboxRadius() const { return m_HitboxRadius; }
+		inline const glm::vec2& GetCollisionPosition() const { return m_CollisionPosition; }
 
         inline void SetPosition(const glm::vec2& _position) { m_Position = _position; }
         inline void SetRotation(float _rotation) { m_Rotation = _rotation; }

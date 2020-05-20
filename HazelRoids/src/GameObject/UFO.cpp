@@ -4,6 +4,8 @@
 #include "RoidsGame.h"
 #include "Bullet.h"
 
+#include "ext\ParticleSystem.h"
+
 namespace hzg
 {
     UFO::UFO()
@@ -13,6 +15,10 @@ namespace hzg
         m_HitboxRadius = 0.06f;
 
         m_RotationRate = 0.0f;
+
+		m_Lifetime = -0.5f;
+
+
     }
 
     void UFO::Shoot()
@@ -27,8 +33,15 @@ namespace hzg
         Reload();
     }
 
+	float skippedFrame = 0;
     void UFO::Update(Hazel::Timestep _ts)
     {
+		if (m_Lifetime <= 0.0f)
+		{
+			m_Lifetime += _ts; // duplicate code;
+			return;
+		}
+
         m_GunPosition = { m_Position.x, m_Position.y - 0.04f };
 
         auto player = RoidsGame::Get()->GetPlayer();

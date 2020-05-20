@@ -39,6 +39,12 @@ namespace hzg
 
         if (distance <= (m_HitboxRadius + _other->m_HitboxRadius))
         {
+			float relative = m_HitboxRadius / (m_HitboxRadius + _other->m_HitboxRadius);
+			float x = (m_Position.x + _other->m_Position.x) * relative;
+			float y = (m_Position.y + _other->m_Position.y) * relative;
+			m_CollisionPosition = { x, y };
+			_other->m_CollisionPosition = { x, y };
+
             _other->Kill();
             Kill();
             return true;
