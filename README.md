@@ -12,11 +12,15 @@ With this project, I want to test and show off the ability to link an executable
 - Hold Alt key to show (Imgui) debug/info gui.
 
 ## Todo list
-- [ ] Add debug/info gui
+- [ ] Improve QoL.
+    - [ ] Add a High Score monitor (current session).
+    - [ ] Add a short invulnerable time after being hit.
+    - [x] Add a short delay after each restart.
+- [ ] Add debug/info gui.
 - [x] Add particles.
-- [ ] Add more particles.
-    - [ ] Add bullet trail.
-    - [ ] Add player ship thruster trail.
+- [x] Add more particles.
+    - [x] Add bullet trail.
+    - [x] Add player ship thruster trail.
  
 ## Build
 Windows only, with MS Visual Studio 2017/2019.

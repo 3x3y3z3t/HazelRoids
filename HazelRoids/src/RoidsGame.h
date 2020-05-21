@@ -4,6 +4,9 @@
 #include "GameObject\Player.h"
 #include "GameObject\Bullet.h"
 
+#define DRAW_PLAYER_SHIP_THRUSTER_FLAME 1
+#define DRAW_BULLET_TRAIL 1
+
 namespace hzg
 {
     class RoidsGame : public Hazel::Layer

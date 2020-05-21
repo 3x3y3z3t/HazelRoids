@@ -5,7 +5,8 @@ namespace hzg
 {
     class Bullet : public GameObject
     {
-
+	private:
+		unsigned int m_FrameCount = 0U;
 
     public:
         Bullet();

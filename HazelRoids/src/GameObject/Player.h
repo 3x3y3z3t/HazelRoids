@@ -5,6 +5,7 @@ namespace hzg
 {
     class Player : public GameObject
     {
+	private:
 
     public:
         Player();

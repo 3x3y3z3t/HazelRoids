@@ -56,10 +56,11 @@ namespace ext
 
 		inline bool IsDead() const { return m_Dead; }
 
-		inline void SetParticleShape(ParticleShape _shape) { m_ParticleShape = _shape; }
 		inline void SetPosition(glm::vec2 _position) { m_Position = _position; }
 		inline void SetEmitDirection(float _direction) { m_EmitDirection = _direction; }
 		inline void SetEmitterLifetime(float _lifetime) { m_EmitterLifetime = _lifetime; }
+
+		inline void SetParticleShape(ParticleShape _shape) { m_ParticleShape = _shape; }
 
 		void Update(Hazel::Timestep _ts);
 	};

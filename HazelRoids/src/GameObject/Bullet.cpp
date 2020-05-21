@@ -1,4 +1,8 @@
 #include "Bullet.h"
+#include "ext\ExtensionFunctions.h"
+#include "ext\ParticleSystem.h"
+
+#include "RoidsGame.h"
 
 namespace hzg
 {
@@ -9,11 +13,29 @@ namespace hzg
         m_HitboxRadius = 0.02f;
     }
 
-    void Bullet::Update(Hazel::Timestep _ts)
-    {
-        m_Speed = m_MaxSpeed;
-        GameObject::Update(_ts);
-    }
+	void Bullet::Update(Hazel::Timestep _ts)
+	{
+		++m_FrameCount;
+		if (DRAW_BULLET_TRAIL)
+		{
+			if (m_FrameCount % 2 == 0U)
+			{
+				ext::Particle* particle = new ext::Particle(ext::ParticleShape::Square);
+
+				particle->SetPosition(m_Position);
+				particle->SetRotation(m_Rotation - 180.0f + ext::RNG32::NextFloat(-10.0f, 10.0f));
+				particle->SetSize(0.01f);
+				particle->SetMaxLifetime(0.5f);
+				particle->SetMaxSpeed(0.1f);
+				particle->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+
+				ext::ParticleSystem::AddParticle(particle);
+			}
+		}
+
+		m_Speed = m_MaxSpeed;
+		GameObject::Update(_ts);
+	}
     
     void Bullet::Render(bool _drawDummy)
     {

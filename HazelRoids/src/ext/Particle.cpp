@@ -46,9 +46,30 @@ namespace ext
 
 	void Particle::Render(bool _drawDummy)
 	{
+		auto pos = m_Position;
+		if (_drawDummy)
+		{
+			float x = m_Position.x;
+			float y = m_Position.y;
+			if (m_Position.x > 1.7777777f - 0.25f)
+				x = m_Position.x - 1.7777777f * 2.0f;
+			else if (m_Position.x < -1.7777777f + 0.25f)
+				x = m_Position.x + 1.7777777f * 2.0f;
+			if (m_Position.y > 0.75f)
+				y = m_Position.y - 2.0f;
+			else if (m_Position.y < -0.75f)
+				y = m_Position.y + 2.0f;
+
+			if (x == m_Position.x && y == m_Position.y)
+				return;
+
+			pos = { x, y };
+		}
+
+		float remainingPercent = (m_MaxLifetime - m_Lifetime) / m_MaxLifetime;
 		if (m_Shape == ParticleShape::Square)
 		{
-			Hazel::Renderer2D::DrawRotatedQuad(m_Position, glm::vec2(m_Size), m_Rotation, m_Color);
+			Hazel::Renderer2D::DrawRotatedQuad(pos, glm::vec2(m_Size * remainingPercent), m_Rotation, m_Color);
 			return;
 		}
 
@@ -58,7 +79,7 @@ namespace ext
 			constexpr float oneFragDeg = 90.0f / fragCount;
 
 			for (float i = 0.0f; i < fragCount; ++i)
-				Hazel::Renderer2D::DrawRotatedQuad(m_Position, glm::vec2(m_Size), oneFragDeg * i, m_Color);
+				Hazel::Renderer2D::DrawRotatedQuad(pos, glm::vec2(m_Size), oneFragDeg * i, m_Color);
 
 			return;
 		}
@@ -69,7 +90,7 @@ namespace ext
 			float size = (percent < 1.0f) ? m_Size * percent : m_Size;
 			float rad = glm::radians(m_Rotation);
 
-			Hazel::Renderer2D::DrawRotatedQuad(m_Position, { size, 0.005f }, m_Rotation, m_Color);
+			Hazel::Renderer2D::DrawRotatedQuad(pos, { size, remainingPercent * 0.01f }, m_Rotation, m_Color);
 
 			return;
 		}

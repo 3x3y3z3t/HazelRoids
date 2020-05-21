@@ -48,9 +48,9 @@ namespace hzg
 		{
 			ext::Particle* p = new ext::Particle(ext::ParticleShape::Square);
 			p->SetPosition(_pos);
-			p->SetSize(0.0075f);
+			p->SetSize(0.01f);
 			p->SetMaxSpeed(ext::RNG32::NextFloat(1.0f, 1.4f));
-			p->SetMaxLifetime(0.20f);
+			p->SetMaxLifetime(0.33f);
 			p->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 			p->SetRotation(ext::RNG32::NextFloat(-179.0f, 180.0f));
 			ext::ParticleSystem::AddParticle(p);
@@ -309,7 +309,7 @@ namespace hzg
     void RoidsGame::OnUpdate(Hazel::Timestep _ts)
     {
         m_CameraController.OnUpdate(_ts);
-
+		
         if (Hazel::Input::IsKeyPressed(Hazel::Key::LeftAlt))
         {
             m_ShowDebugGui = true;
@@ -319,20 +319,23 @@ namespace hzg
             m_ShowDebugGui = false;
         }
 
+		if (holdTime < 0.0f)
+			holdTime += _ts;
         if (Hazel::Input::IsKeyPressed(Hazel::Key::LeftControl) && Hazel::Input::IsKeyPressed(Hazel::Key::R))
         {
             holdTime += _ts;
         }
         else
         {
-            holdTime = 0.0f;
+			if (holdTime > 0.0f)
+				holdTime = 0.0f;
         }
 
         if (holdTime >= maxHoldTime)
         {
             // restart the game;
             Init();
-            holdTime = 0.0f;
+            holdTime = -1.0f;
         }
 
         if (!m_Player->IsDead())
@@ -584,9 +587,8 @@ namespace hzg
             Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 0.01f, 0.01f }, { 0.0f, 1.0f, 1.0f, 1.0f });
 
             // draw restart circle;
+			if (holdTime > 0.0f)
             {
-                
-
                 //ext::DrawCircle({ 0.0f, 0.0f }, 0.1f, { 0.0f, 1.0f, 1.0f, 1.0f }, 2.0f);
                 float deg = holdTime / maxHoldTime * 360.0f;
                 ext::DrawArc({ 0.0f, 0.0f }, 0.1f, 90.0f, 90.0f - deg, { 0.0f, 1.0f, 1.0f, 1.0f }, 2.0f);
@@ -637,7 +639,7 @@ namespace hzg
 			//Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 0.01f, 0.01f }, { 0.0f, 1.0f, 1.0f, 1.0f });
 
 
-
+			// add player particles;
 
 
 

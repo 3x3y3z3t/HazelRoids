@@ -51,7 +51,7 @@ namespace ext
 		for (size_t i = 0; i < ps->m_Particles.size(); ++i)
 		{
 			ps->m_Particles[i]->Render();
-			//ps->m_Particles[i]->Render(true);
+			ps->m_Particles[i]->Render(true);
 		}
 	}
 

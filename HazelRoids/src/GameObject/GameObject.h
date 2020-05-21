@@ -60,6 +60,7 @@ namespace hzg
         inline float GetRotation() const { return m_Rotation; }
 		inline float GetHitboxRadius() const { return m_HitboxRadius; }
 		inline const glm::vec2& GetCollisionPosition() const { return m_CollisionPosition; }
+		inline int GetAccelerating() const { return m_Accelerating; }
 
         inline void SetPosition(const glm::vec2& _position) { m_Position = _position; }
         inline void SetRotation(float _rotation) { m_Rotation = _rotation; }
