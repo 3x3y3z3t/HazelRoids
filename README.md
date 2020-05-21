@@ -13,15 +13,6 @@ With this project, I want to test and show off the ability to link an executable
 - *You can shoot down enemy UFO's bullets.* 
 
 ## Todo list
-- [x] Improve QoL.
-    - [x] Add a High Score monitor (current session).
-    - [x] Add a short invulnerable time after being hit.
-    - [x] Add a short delay after each restart.
-- [x] Add debug/info gui.
-- [x] Add particles.
-- [x] Add more particles.
-    - [x] Add bullet trail.
-    - [x] Add player ship thruster trail.
  
 ## Build
 Windows only, with MS Visual Studio 2017/2019.
