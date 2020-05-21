@@ -37,6 +37,9 @@ namespace hzg
         int m_Accelerating = 0;
         int m_Rotating = 0;
         bool m_Dead = false;
+		float m_ImmuneTime = 0.0f;
+
+		unsigned int m_FrameCount = 0U;
 
         std::vector<glm::vec2> m_Vertices;
         float m_CachedSin = 0.0f;

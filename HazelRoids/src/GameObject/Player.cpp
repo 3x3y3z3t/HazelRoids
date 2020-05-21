@@ -12,6 +12,7 @@ namespace hzg
         m_Type = GameObjectType::Player;
         m_HitboxRadius = 0.05f;
 
+		m_ImmuneTime = m_MaxImmuneTime;
 
 
 		// ;
@@ -49,11 +50,17 @@ namespace hzg
 				}
 			}
 		}
+
         GameObject::Update(_ts);
     }
 
     void Player::Render(bool _drawDummy)
     {
+		if (m_ImmuneTime > 0.0f)
+		{
+			if (m_FrameCount % 6 < 3U)
+				return;
+		}
         GameObject::Render(_drawDummy);
 
         auto pos = m_Position;

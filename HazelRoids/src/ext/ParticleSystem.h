@@ -25,6 +25,9 @@ namespace ext
 		static void AddParticle(Particle* _particle) { Get()->m_Particles.insert(Get()->m_Particles.cbegin(), _particle); }
 		static void AddEmitter(ParticleEmitter* _emitter) { Get()->m_Emitters.push_back(_emitter); }
 
+		static unsigned int CountParticles() { return (unsigned int)Get()->m_Particles.size(); }
+		static unsigned int CountEmitters() { return (unsigned int)Get()->m_Emitters.size(); }
+
 		static void UpdateParticles(Hazel::Timestep _ts);
 		static void RenderParticles();
 	};

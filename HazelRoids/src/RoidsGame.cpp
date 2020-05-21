@@ -11,6 +11,7 @@
 namespace hzg
 {
     float holdTime = 0.0f;
+	float toggleTime = 0.0f;
     float roidSpawnInterval = 0.0f;
     float ufoSpawnInterval = 0.0f;
     constexpr float maxHoldTime = 1.0f;
@@ -30,6 +31,13 @@ namespace hzg
         "    # #    #   # #  #  #        ",
         "####   ###  ###  #   #  #### #  ",
     };
+	constexpr char* hiText[5] = {
+		"#   #  ###  ",
+		"#   #   #   ",
+		"#####   #   ",
+		"#   #   #   ",
+		"#   #  ###  ",
+	};
 	constexpr char* heartSymbol[9] = {
 		"  ##   ##  ",
 		" #### #### ",
@@ -42,6 +50,89 @@ namespace hzg
 		"     #     ",
 	};
 
+	#pragma region Construct Drawable Score Text
+	void ConstructScoreText(std::string (&_renderTexts)[5], const char* _scoreText)
+	{
+		for (int i = 0; i < 9; ++i)
+		{
+			switch (_scoreText[i])
+			{
+				case '0':
+					_renderTexts[0].append("  ### ");
+					_renderTexts[1].append(" #  ##");
+					_renderTexts[2].append(" # # #");
+					_renderTexts[3].append(" ##  #");
+					_renderTexts[4].append("  ### ");
+					break;
+				case '1':
+					_renderTexts[0].append("  ##  ");
+					_renderTexts[1].append(" # #  ");
+					_renderTexts[2].append("   #  ");
+					_renderTexts[3].append("   #  ");
+					_renderTexts[4].append(" #####");
+					break;
+				case '2':
+					_renderTexts[0].append(" #### ");
+					_renderTexts[1].append("     #");
+					_renderTexts[2].append("  ### ");
+					_renderTexts[3].append(" #    ");
+					_renderTexts[4].append(" #####");
+					break;
+				case '3':
+					_renderTexts[0].append(" #### ");
+					_renderTexts[1].append("     #");
+					_renderTexts[2].append("  ### ");
+					_renderTexts[3].append("     #");
+					_renderTexts[4].append(" #### ");
+					break;
+				case '4':
+					_renderTexts[0].append(" #  # ");
+					_renderTexts[1].append(" #  # ");
+					_renderTexts[2].append(" #####");
+					_renderTexts[3].append("    # ");
+					_renderTexts[4].append("    # ");
+					break;
+				case '5':
+					_renderTexts[0].append(" #####");
+					_renderTexts[1].append(" #    ");
+					_renderTexts[2].append(" #### ");
+					_renderTexts[3].append("     #");
+					_renderTexts[4].append(" #### ");
+					break;
+				case '6':
+					_renderTexts[0].append("  ### ");
+					_renderTexts[1].append(" #    ");
+					_renderTexts[2].append("  ### ");
+					_renderTexts[3].append(" #   #");
+					_renderTexts[4].append("  ### ");
+					break;
+				case '7':
+					_renderTexts[0].append(" #####");
+					_renderTexts[1].append(" #   #");
+					_renderTexts[2].append("    # ");
+					_renderTexts[3].append("   #  ");
+					_renderTexts[4].append("  #   ");
+					break;
+				case '8':
+					_renderTexts[0].append("  ### ");
+					_renderTexts[1].append(" #   #");
+					_renderTexts[2].append("  ### ");
+					_renderTexts[3].append(" #   #");
+					_renderTexts[4].append("  ### ");
+					break;
+				case '9':
+					_renderTexts[0].append("  ### ");
+					_renderTexts[1].append(" #   #");
+					_renderTexts[2].append("  ### ");
+					_renderTexts[3].append("     #");
+					_renderTexts[4].append("  ### ");
+					break;
+			}
+		}
+	}
+	#pragma endregion
+
+	#pragma region Particle Emitter
 	void EmitCollisionParticles(const glm::vec2& _pos)
 	{
 		for (int count = 0; count < 10; ++count)
@@ -86,6 +177,7 @@ namespace hzg
 
 		ext::ParticleSystem::AddEmitter(emitter);
 	}
+	#pragma endregion
 
     void SpawnRandomUFO()
     {
@@ -171,12 +263,27 @@ namespace hzg
         roidSpawnInterval = 0.0f;
         ufoSpawnInterval = 0.0f;
 
+		#pragma region Update HiScore Text
+		//m_HighscoreTexts[0] = hiText[0];
+		//m_HighscoreTexts[1] = hiText[1];
+		//m_HighscoreTexts[2] = hiText[2];
+		//m_HighscoreTexts[3] = hiText[3];
+		//m_HighscoreTexts[4] = hiText[4];
+
+		//m_HighscoreTexts[0].append(scoreText[0]);
+		//m_HighscoreTexts[1].append(scoreText[1]);
+		//m_HighscoreTexts[2].append(scoreText[2]);
+		//m_HighscoreTexts[3].append(scoreText[3]);
+		//m_HighscoreTexts[4].append(scoreText[4]);
+
+		//char buffer[16];
+		//sprintf_s(buffer, "%09d", m_HighScore);
+		//ConstructScoreText(m_HighscoreTexts, buffer);
+		#pragma endregion
 
 
 		auto pos = glm::vec2(0.5f, 0.5f);
 		float size = 0.075f;
-
-
 
 		constexpr float sizes[] = { 3.25f, 3.0f, 2.75f, 2.5f, 1.5f };
 		constexpr glm::vec4 colors[] {
@@ -232,11 +339,11 @@ namespace hzg
 	void hzg::RoidsGame::RenderLifeCount() const
 	{
 		using namespace Hazel;
-		constexpr float pixelWidth = 0.010f;
-		glm::vec2 topLeft = { -1.6f, 0.725f };
+		constexpr float pixelWidth = 0.0075f;
+		glm::vec2 topLeft = { -1.6f, 0.65f };
 		glm::vec4 color = { 1.0f, 1.0f, 0.1f, 1.0f };
 
-		for (int life = 0; life < m_PlayerLife; ++life)
+		for (unsigned int life = 0; life < m_PlayerLife; ++life)
 		{
 			for (int i = 0; i < 9; ++i)
 			{
@@ -254,25 +361,37 @@ namespace hzg
 		}
 	}
 
-	void RoidsGame::RenderScoreText() const
+	void RoidsGame::RenderScoreTexts() const
     {
         using namespace Hazel;
-        constexpr float pixelWidth = 0.015f;
+        constexpr float pixelWidth = 0.0125f;
         glm::vec2 topLeft = { -1.6f, 0.85f };
         glm::vec4 color = { 1.0f, 1.0f, 0.1f, 1.0f };
 
-        for (int i = 0; i < 5; ++i)
-        {
-            auto& str = m_ScoreTexts[i];
+		for (int i = 0; i < 5; ++i)
+		{
+			auto& str = m_HighscoreTexts[i];
+			for (int j = 0; j < str.length(); ++j)
+			{
+				if (str[j] == '#')
+				{
+					Renderer2D::DrawQuad({ topLeft.x + pixelWidth * j, topLeft.y - pixelWidth * i }, { pixelWidth, pixelWidth }, color);
+				}
+			}
+		}
 
-            for (int j = 0; j < str.length(); ++j)
-            {
-                if (str[j] == '#')
-                {
-                    Renderer2D::DrawQuad({ topLeft.x + pixelWidth * j, topLeft.y - pixelWidth * i }, { pixelWidth, pixelWidth }, color);
-                }
-            }
-        }
+		topLeft.y = 0.75f;
+		for (int i = 0; i < 5; ++i)
+		{
+			auto& str = m_ScoreTexts[i];
+			for (int j = 0; j < str.length(); ++j)
+			{
+				if (str[j] == '#')
+				{
+					Renderer2D::DrawQuad({ topLeft.x + pixelWidth * j, topLeft.y - pixelWidth * i }, { pixelWidth, pixelWidth }, color);
+				}
+			}
+		}
     }
 
     void RoidsGame::RenderYouLoseText() const
@@ -310,15 +429,20 @@ namespace hzg
     {
         m_CameraController.OnUpdate(_ts);
 		
-        if (Hazel::Input::IsKeyPressed(Hazel::Key::LeftAlt))
-        {
-            m_ShowDebugGui = true;
-        }
-        else
-        {
-            m_ShowDebugGui = false;
-        }
-
+		if (Hazel::Input::IsKeyPressed(Hazel::Key::Tab))
+		{
+			if (toggleTime <= 0.0f)
+			{
+				if (m_ShowDebugGui == true)
+					m_ShowDebugGui = false;
+				else
+					m_ShowDebugGui = true;
+				toggleTime = 0.25f;
+			}
+		}
+		if (toggleTime > 0.0f)
+			toggleTime -= _ts;
+		
 		if (holdTime < 0.0f)
 			holdTime += _ts;
         if (Hazel::Input::IsKeyPressed(Hazel::Key::LeftControl) && Hazel::Input::IsKeyPressed(Hazel::Key::R))
@@ -410,6 +534,7 @@ namespace hzg
 
             // ===== Check for Collision =====
             // ===============================
+			// Player vs.Objects;
             for (int i = 0; i < m_Objects.size(); ++i)
             {
                 if (!m_Player->IsDead())
@@ -440,7 +565,7 @@ namespace hzg
 				}
             }
 
-
+			// Bullets vs. Objects;
             for (int i = 0; i < m_Bullets.size(); ++i)
             {
 				for (int j = 0; j < m_Objects.size(); ++j)
@@ -465,14 +590,12 @@ namespace hzg
                 }
             }
 
-
-
             // ===== Complete Collision Checking =====
             // =======================================
 
             roidSpawnInterval += _ts;
             ufoSpawnInterval += _ts;
-        }
+		}
 
         if (m_Score > 999'999'999) m_Score = 999'999'999;
         #pragma region Update Score Text
@@ -484,104 +607,51 @@ namespace hzg
             m_ScoreTexts[3] = scoreText[3];
             m_ScoreTexts[4] = scoreText[4];
 
+			m_ScoreTexts[0].append("            ");
+			m_ScoreTexts[1].append("            ");
+			m_ScoreTexts[2].append("            ");
+			m_ScoreTexts[3].append("            ");
+			m_ScoreTexts[4].append("            ");
+
             char buffer[16];
             sprintf_s(buffer, "%09d", m_Score);
-            for (int i = 0; i < 9; ++i)
-            {
-                switch (buffer[i])
-                {
-                    case '0':
-                        m_ScoreTexts[0].append("  ### ");
-                        m_ScoreTexts[1].append(" #  ##");
-                        m_ScoreTexts[2].append(" # # #");
-                        m_ScoreTexts[3].append(" ##  #");
-                        m_ScoreTexts[4].append("  ### ");
-                        break;
-                    case '1':
-                        m_ScoreTexts[0].append("  ##  ");
-                        m_ScoreTexts[1].append(" # #  ");
-                        m_ScoreTexts[2].append("   #  ");
-                        m_ScoreTexts[3].append("   #  ");
-                        m_ScoreTexts[4].append(" #####");
-                        break;
-                    case '2':
-                        m_ScoreTexts[0].append(" #### ");
-                        m_ScoreTexts[1].append("     #");
-                        m_ScoreTexts[2].append("  ### ");
-                        m_ScoreTexts[3].append(" #    ");
-                        m_ScoreTexts[4].append(" #####");
-                        break;
-                    case '3':
-                        m_ScoreTexts[0].append(" #### ");
-                        m_ScoreTexts[1].append("     #");
-                        m_ScoreTexts[2].append("  ### ");
-                        m_ScoreTexts[3].append("     #");
-                        m_ScoreTexts[4].append(" #### ");
-                        break;
-                    case '4':
-                        m_ScoreTexts[0].append(" #  # ");
-                        m_ScoreTexts[1].append(" #  # ");
-                        m_ScoreTexts[2].append(" #####");
-                        m_ScoreTexts[3].append("    # ");
-                        m_ScoreTexts[4].append("    # ");
-                        break;
-                    case '5':
-                        m_ScoreTexts[0].append(" #####");
-                        m_ScoreTexts[1].append(" #    ");
-                        m_ScoreTexts[2].append(" #### ");
-                        m_ScoreTexts[3].append("     #");
-                        m_ScoreTexts[4].append(" #### ");
-                        break;
-                    case '6':
-                        m_ScoreTexts[0].append("  ### ");
-                        m_ScoreTexts[1].append(" #    ");
-                        m_ScoreTexts[2].append("  ### ");
-                        m_ScoreTexts[3].append(" #   #");
-                        m_ScoreTexts[4].append("  ### ");
-                        break;
-                    case '7':
-                        m_ScoreTexts[0].append(" #####");
-                        m_ScoreTexts[1].append(" #   #");
-                        m_ScoreTexts[2].append("    # ");
-                        m_ScoreTexts[3].append("   #  ");
-                        m_ScoreTexts[4].append("  #   ");
-                        break;
-                    case '8':
-                        m_ScoreTexts[0].append("  ### ");
-                        m_ScoreTexts[1].append(" #   #");
-                        m_ScoreTexts[2].append("  ### ");
-                        m_ScoreTexts[3].append(" #   #");
-                        m_ScoreTexts[4].append("  ### ");
-                        break;
-                    case '9':
-                        m_ScoreTexts[0].append("  ### ");
-                        m_ScoreTexts[1].append(" #   #");
-                        m_ScoreTexts[2].append("  ### ");
-                        m_ScoreTexts[3].append("     #");
-                        m_ScoreTexts[4].append("  ### ");
-                        break;
-                }
-}
-
-
-
-
-
+			ConstructScoreText(m_ScoreTexts, buffer);
             m_LastScore = m_Score;
+
+			if (m_Score > m_HighScore)
+			{
+				m_HighScore = m_Score;
+				#pragma region Update HiScore Text
+				m_HighscoreTexts[0] = hiText[0];
+				m_HighscoreTexts[1] = hiText[1];
+				m_HighscoreTexts[2] = hiText[2];
+				m_HighscoreTexts[3] = hiText[3];
+				m_HighscoreTexts[4] = hiText[4];
+
+				m_HighscoreTexts[0].append(scoreText[0]);
+				m_HighscoreTexts[1].append(scoreText[1]);
+				m_HighscoreTexts[2].append(scoreText[2]);
+				m_HighscoreTexts[3].append(scoreText[3]);
+				m_HighscoreTexts[4].append(scoreText[4]);
+
+				char buffer[16];
+				sprintf_s(buffer, "%09d", m_HighScore);
+				ConstructScoreText(m_HighscoreTexts, buffer);
+				#pragma endregion
+
+			}
         }
         #pragma endregion
 
 
-
-
 		ext::ParticleSystem::UpdateParticles(_ts);
-
 
 
         // ===== Draw =====
         // ================
         {
             using namespace Hazel;
+			Renderer2D::ResetStats();
             RenderCommand::Clear();
             Renderer2D::BeginScene(m_CameraController.GetCamera());
             Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 0.01f, 0.01f }, { 0.0f, 1.0f, 1.0f, 1.0f });
@@ -600,7 +670,7 @@ namespace hzg
                 //Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.7777777f * 2.0f, 2.0f }, { 0.8f, 0.8f, 0.8f, 0.1f });
             }
 
-            RenderScoreText();
+            RenderScoreTexts();
 			RenderLifeCount();
 
             // draw player;
@@ -663,51 +733,76 @@ namespace hzg
 
     }
 
-    void RoidsGame::OnImGuiRender()
-    {
+	void RoidsGame::OnImGuiRender()
+	{
 		if (!m_ShowDebugGui)
 			return;
-    
-        auto vpPos = ImGui::GetMainViewport()->Pos;
-        ImGuiIO io = ImGui::GetIO();
-        ImGuiWindowFlags flag = ImGuiWindowFlags_NoMove
-            | ImGuiWindowFlags_NoResize
-            | ImGuiWindowFlags_NoCollapse
-            ;
-        if (m_Player->IsDead())
-        {
-            ImGui::SetNextWindowPos(ImVec2(vpPos.x + 366, vpPos.y + 297), ImGuiCond_Once);
-            ImGui::SetNextWindowSize(ImVec2(550, 126), ImGuiCond_Once);
-            // show Dead guide window;
-            ImGui::Begin("You Lose window", nullptr, flag);
-            auto font = ImGui::GetFont();
-            font->FontSize = 3.0f;
-            ImGui::SetCursorPosX(275 - ImGui::CalcTextSize("You Lose!").x * 0.5f);
-            ImGui::Text("You Lose!");
-            font->FontSize = 13.0f;
-            ImGui::NewLine();
-            ImGui::NewLine();
-            ImGui::NewLine();
-            ImGui::SetCursorPosX(275 - ImGui::CalcTextSize("Hold Ctrl + R for 1 second to restart.").x * 0.5f);
-            ImGui::Text("Hold Ctrl + R for 1 second to restart.");
-            ImGui::End();
-        }
 
-        ImGui::SetNextWindowPos(ImVec2(vpPos.x + 41, vpPos.y + 17), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(506, 120), ImGuiCond_Once);
-        // always show score window;
-        ImGui::Begin("Score window", nullptr, flag);
-        auto font = ImGui::GetFont();
-        font->FontSize = 3.2f;
-        ImGui::Text("Score: %09d", m_Score);
-		ImGui::SetCursorPosY(80.0f);
+		auto vpPos = ImGui::GetMainViewport()->Pos;
+		ImGuiIO io = ImGui::GetIO();
+		ImGuiWindowFlags flag = ImGuiWindowFlags_NoMove
+			| ImGuiWindowFlags_NoResize
+			| ImGuiWindowFlags_NoCollapse
+			| ImGuiWindowFlags_NoFocusOnAppearing
+			;
+		if (m_Player->IsDead())
+		{
+			ImGui::SetNextWindowPos(ImVec2(vpPos.x + 366, vpPos.y + 297), ImGuiCond_Once);
+			ImGui::SetNextWindowSize(ImVec2(550, 126), ImGuiCond_Once);
+			// show Dead guide window;
+			ImGui::Begin("You Lose window", nullptr, flag);
+			auto font = ImGui::GetFont();
+			font->FontSize = 3.0f;
+			ImGui::SetCursorPosX(275 - ImGui::CalcTextSize("You Lose!").x * 0.5f);
+			ImGui::Text("You Lose!");
+			font->FontSize = 13.0f;
+			ImGui::NewLine();
+			ImGui::NewLine();
+			ImGui::NewLine();
+			ImGui::SetCursorPosX(275 - ImGui::CalcTextSize("Hold Ctrl + R for 1 second to restart.").x * 0.5f);
+			ImGui::Text("Hold Ctrl + R for 1 second to restart.");
+			ImGui::End();
+		}
+
+		ImGui::SetNextWindowPos(ImVec2(vpPos.x + 41, vpPos.y + 17), ImGuiCond_Once);
+		ImGui::SetNextWindowSize(ImVec2(500, 150), ImGuiCond_Once);
+		// always show score window;
+		ImGui::Begin("Score window", nullptr, flag);
+		auto font = ImGui::GetFont();
+		font->FontSize = 4.0f;
+		ImGui::SetCursorPosX(20.0f);
+		ImGui::Text("HiScore: %09d", m_HighScore);
+		ImGui::SetCursorPos({ 20.0f, 60.0f });
+		ImGui::Text("Score  : %09d", m_Score);
+		ImGui::SetCursorPos({ 20.0f, 100.0f });
 		font->FontSize = 5.0f;
 		ImGui::Text("Life: %02d", m_PlayerLife);
-        font->FontSize = 13.0f;
-        ImGui::End();
+		font->FontSize = 13.0f;
+		ImGui::End();
 
-        //ImGui::ShowDemoWindow();
-    }
+
+		ImGui::Begin("Debug Statistics", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
+		ImGui::Text("Average Frametime = %.3f (FPS = %.1f)", 1000.0f / io.Framerate, io.Framerate);
+		ImGui::NewLine();
+		if (ImGui::TreeNodeEx("Renderer2D Stats", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			auto stats = Hazel::Renderer2D::GetStats();
+			ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+			ImGui::Text("Quads: %d", stats.QuadCount);
+			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNodeEx("Game Stats", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text("Game Object Count: %d", m_Objects.size() + m_Bullets.size() + 1);
+			ImGui::Text("Particle Count: %d (Emitter Count: %d)", ext::ParticleSystem::CountParticles(), ext::ParticleSystem::CountEmitters());
+			ImGui::TreePop();
+		}
+		ImGui::End();
+
+		//ImGui::ShowDemoWindow();
+	}
 
     void RoidsGame::OnEvent(Hazel::Event& _event)
     {

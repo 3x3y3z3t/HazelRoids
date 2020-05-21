@@ -23,8 +23,8 @@ namespace hzg
 
     bool GameObject::Collide(GameObject* _other)
     {
-        if (m_Type == _other->m_Type)
-            return false;
+		if (m_Type == _other->m_Type)
+			;// return false;
 
         float offsX = _other->m_Position.x - m_Position.x;
         float offsY = _other->m_Position.y - m_Position.y;
@@ -45,8 +45,10 @@ namespace hzg
 			m_CollisionPosition = { x, y };
 			_other->m_CollisionPosition = { x, y };
 
-            _other->Kill();
-            Kill();
+			if (_other->m_ImmuneTime <= 0.0f)
+				_other->Kill();
+			if (m_ImmuneTime <= 0.0f)
+				Kill();
             return true;
         }
 
@@ -55,6 +57,11 @@ namespace hzg
 
     void GameObject::Update(Hazel::Timestep _ts)
     {
+		++m_FrameCount;
+
+		if (m_ImmuneTime > 0.0f)
+			m_ImmuneTime -= _ts;
+
         if (m_Accelerating > 0)
         {
             m_Speed += m_AccelerationRate * _ts;

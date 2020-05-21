@@ -9,13 +9,13 @@ namespace hzg
     Bullet::Bullet()
     {
         m_Type = GameObjectType::Bullet;
+		m_Score = 10;
         m_AccelerationRate = 0.0f;
         m_HitboxRadius = 0.02f;
     }
 
 	void Bullet::Update(Hazel::Timestep _ts)
 	{
-		++m_FrameCount;
 		if (DRAW_BULLET_TRAIL)
 		{
 			if (m_FrameCount % 2 == 0U)

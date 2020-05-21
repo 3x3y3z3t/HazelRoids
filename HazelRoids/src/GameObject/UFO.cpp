@@ -11,13 +11,12 @@ namespace hzg
     UFO::UFO()
     {
         m_Type = GameObjectType::UFO;
-        m_Score = 5000;
+        m_Score = 500;
         m_HitboxRadius = 0.06f;
 
         m_RotationRate = 0.0f;
 
-		m_Lifetime = -0.5f;
-
+		m_ImmuneTime = 0.5f;
 
     }
 
@@ -36,9 +35,9 @@ namespace hzg
 	float skippedFrame = 0;
     void UFO::Update(Hazel::Timestep _ts)
     {
-		if (m_Lifetime <= 0.0f)
+		if (m_ImmuneTime > 0.0f)
 		{
-			m_Lifetime += _ts; // duplicate code;
+			m_ImmuneTime -= _ts;
 			return;
 		}
 
