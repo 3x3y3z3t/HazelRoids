@@ -12,7 +12,7 @@ namespace hzg
 
         if (_size == 0U)
         {
-			_size = 1U;
+            _size = 1U;
         }
         m_Size = _size;
         m_Score = 100 * (6 - m_Size);

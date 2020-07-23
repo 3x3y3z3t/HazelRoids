@@ -8,22 +8,21 @@
 class Sandbox : public Hazel::Application
 {
 public:
-	Sandbox()
-	{
+    Sandbox()
+    {
         ext::RNG32::Init();
-		ext::ParticleSystem::Create();
+        ext::ParticleSystem::Create();
 
         PushLayer(hzg::RoidsGame::Create());
 
 
-	}
+    }
 
-	~Sandbox()
-	{
-	}
+    ~Sandbox()
+    {}
 };
 
 Hazel::Application* Hazel::CreateApplication()
 {
-	return new Sandbox();
+    return new Sandbox();
 }

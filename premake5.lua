@@ -16,7 +16,7 @@ workspace "HazelRoids"
     outputdir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.architecture}"
 
     IncludeDir = {}
-    IncludeDir["engine"] = "D:/Hazel"
+    IncludeDir["engine"] = "D:/devlib/Hazel"
     
     IncludeDir["vendor"] = "%{IncludeDir.engine}/Hazel/vendor"
     IncludeDir["glm"] = "%{IncludeDir.vendor}/glm"

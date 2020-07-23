@@ -5,7 +5,7 @@ namespace hzg
 {
     class Bullet : public GameObject
     {
-	private:
+    private:
 
     public:
         Bullet();

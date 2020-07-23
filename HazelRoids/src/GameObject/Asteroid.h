@@ -16,7 +16,7 @@ namespace hzg
         virtual void Shoot() override {}
         virtual void Kill() override;
 
-		inline unsigned int GetSize() const { return m_Size; }
+        inline unsigned int GetSize() const { return m_Size; }
 
         virtual void Update(Hazel::Timestep _ts) override;
         virtual void Render(bool _drawDummy = false) override;

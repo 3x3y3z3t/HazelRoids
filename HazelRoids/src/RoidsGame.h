@@ -21,16 +21,16 @@ namespace hzg
 
         int m_Score = 0;
         int m_LastScore = -1; // This is used to cache the last score.
-		int m_HighScore = -1;
+        int m_HighScore = -1;
 
         Player* m_Player = nullptr;
-		uint32_t m_PlayerLife = 5U;
+        uint32_t m_PlayerLife = 5U;
 
         std::vector<GameObject*> m_Objects;
         std::vector<Bullet*> m_Bullets;
 
         std::string m_ScoreTexts[5] = { "", "", "", "", "" };
-		std::string m_HighscoreTexts[5] = { "", "", "", "", "" };
+        std::string m_HighscoreTexts[5] = { "", "", "", "", "" };
 
 
     private:

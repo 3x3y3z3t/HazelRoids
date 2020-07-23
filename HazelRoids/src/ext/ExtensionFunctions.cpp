@@ -12,7 +12,7 @@ namespace ext
 
         glm::vec2 center = { (_endPoint.x + _startPoint.x) * 0.5f, (_endPoint.y + _startPoint.y) * 0.5f };
         float length = glm::distance(_startPoint, _endPoint);
-        
+
         float angle = glm::degrees(glm::atan(_endPoint.y - _startPoint.y, _endPoint.x - _startPoint.x));
 
         Hazel::Renderer2D::DrawRotatedQuad(center, { length, _borderThickness * 0.003f }, angle, _color);

@@ -16,7 +16,7 @@ namespace hzg
 
         m_RotationRate = 0.0f;
 
-		m_ImmuneTime = 0.5f;
+        m_ImmuneTime = 0.5f;
 
     }
 
@@ -32,14 +32,14 @@ namespace hzg
         Reload();
     }
 
-	float skippedFrame = 0;
+    float skippedFrame = 0;
     void UFO::Update(Hazel::Timestep _ts)
     {
-		if (m_ImmuneTime > 0.0f)
-		{
-			m_ImmuneTime -= _ts;
-			return;
-		}
+        if (m_ImmuneTime > 0.0f)
+        {
+            m_ImmuneTime -= _ts;
+            return;
+        }
 
         m_GunPosition = { m_Position.x, m_Position.y - 0.04f };
 
